@@ -22,6 +22,7 @@
   <a href="#wiring-and-connections">Wiring</a> •
   <a href="#getting-started">Getting Started</a> •
   <a href="#voice-command-reference">Voice Commands</a> •
+  <a href="#glimpse-of-works">Glimpse of Works</a> •
   <a href="#contributing">Contributing</a> •
   <a href="#license">License</a>
 </p>
@@ -238,7 +239,7 @@ The voice processing system includes natural multilingual mappings for English a
 
 ---
 
-## Media and Implementations
+## Glimpse of Works
 
 <table align="center" width="100%">
   <tr>
