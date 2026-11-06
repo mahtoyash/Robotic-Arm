@@ -243,23 +243,23 @@ The voice processing system includes natural multilingual mappings for English a
 
 <table align="center" width="100%">
   <tr>
-    <td align="center" width="50%">
+    <td align="center" width="50%" valign="top">
       <b>Physical Hardware Assembly</b><br/><br/>
-      <img src="assets/hardware_assembly.jpg" alt="Hardware Assembly" width="95%" />
+      <img src="assets/hardware_assembly.jpg" alt="Hardware Assembly" height="280" style="max-height: 280px; object-fit: contain; border-radius: 8px;" />
     </td>
-    <td align="center" width="50%">
+    <td align="center" width="50%" valign="top">
       <b>Voice Command Execution (Live Demo)</b><br/><br/>
-      <img src="assets/demo_working.gif" alt="Voice Control Demo" width="95%" />
+      <img src="assets/demo_working.gif" alt="Voice Control Demo" height="280" style="max-height: 280px; object-fit: contain; border-radius: 8px;" />
     </td>
   </tr>
   <tr>
-    <td align="center" width="50%">
-      <b>Arm Articulation and Motion Routine (Demo)</b><br/><br/>
-      <img src="assets/demo_motion.gif" alt="Arm Motion Demo" width="95%" onerror="this.src='https://dummyimage.com/600x400/0f172a/818cf8.png&text=Second+Demo+GIF+(Drop+demo_motion.gif+in+assets/)'" />
-    </td>
-    <td align="center" width="50%">
+    <td align="center" width="50%" valign="top">
       <b>Wiring and Circuit Schematic</b><br/><br/>
-      <img src="assets/wiring_diagram.png" alt="Circuit Schematic" width="95%" onerror="this.src='https://dummyimage.com/600x400/0f172a/fb923c.png&text=Wiring+Schematic+(Drop+wiring_diagram.png+in+assets/)'" />
+      <img src="assets/wiring_diagram.png" alt="Circuit Schematic" height="280" style="max-height: 280px; object-fit: contain; border-radius: 8px;" />
+    </td>
+    <td align="center" width="50%" valign="top">
+      <b>Arm Articulation &amp; Motion Routine (Demo)</b><br/><br/>
+      <img src="assets/demo_motion.gif" alt="Arm Motion Demo" height="280" style="max-height: 280px; object-fit: contain; border-radius: 8px;" />
     </td>
   </tr>
 </table>
@@ -267,8 +267,8 @@ The voice processing system includes natural multilingual mappings for English a
 > **Project Media Files in [`assets/`](assets/):**  
 > - `assets/hardware_assembly.jpg` (Physical robotic arm hardware build)
 > - `assets/demo_working.gif` (Live voice control demo: Wake, Sleep, Poses)
-> - `assets/demo_motion.gif` (Live motion demo: Pick, Place, Gripper articulation)
 > - `assets/wiring_diagram.png` (Complete circuit wiring schematic)
+> - `assets/demo_motion.gif` (Arm articulation and motion routine demo)
 
 ---
 
