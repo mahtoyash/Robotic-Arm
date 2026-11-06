@@ -244,32 +244,30 @@ The voice processing system includes natural multilingual mappings for English a
   <tr>
     <td align="center" width="50%">
       <b>Physical Hardware Assembly</b><br/><br/>
-      <img src="assets/hardware_assembly.jpg" alt="Hardware Assembly" width="95%" onerror="this.src='https://dummyimage.com/600x400/0f172a/38bdf8.png&text=Hardware+Assembly+Photo+(Drop+in+assets/)'" />
+      <img src="assets/hardware_assembly.jpg" alt="Hardware Assembly" width="95%" />
     </td>
     <td align="center" width="50%">
-      <b>Voice Control in Action (Live Demo)</b><br/><br/>
-      <img src="assets/demo_working.gif" alt="Voice Control Demo" width="95%" onerror="this.src='https://dummyimage.com/600x400/0f172a/34d399.png&text=Voice+Command+Demo+GIF+(Drop+in+assets/)'" />
+      <b>Voice Command Execution (Live Demo)</b><br/><br/>
+      <img src="assets/demo_working.gif" alt="Voice Control Demo" width="95%" />
     </td>
   </tr>
   <tr>
     <td align="center" width="50%">
-      <b>Interactive Web Control Dashboard</b><br/><br/>
-      <img src="assets/web_dashboard.png" alt="Web Dashboard" width="95%" onerror="this.src='https://dummyimage.com/600x400/0f172a/818cf8.png&text=Web+Dashboard+UI+(Drop+in+assets/)'" />
+      <b>Arm Articulation and Motion Routine (Demo)</b><br/><br/>
+      <img src="assets/demo_motion.gif" alt="Arm Motion Demo" width="95%" onerror="this.src='https://dummyimage.com/600x400/0f172a/818cf8.png&text=Second+Demo+GIF+(Drop+demo_motion.gif+in+assets/)'" />
     </td>
     <td align="center" width="50%">
       <b>Wiring and Circuit Schematic</b><br/><br/>
-      <img src="assets/wiring_diagram.png" alt="Circuit Schematic" width="95%" onerror="this.src='https://dummyimage.com/600x400/0f172a/fb923c.png&text=Wiring+Schematic+(Drop+in+assets/)'" />
+      <img src="assets/wiring_diagram.png" alt="Circuit Schematic" width="95%" onerror="this.src='https://dummyimage.com/600x400/0f172a/fb923c.png&text=Wiring+Schematic+(Drop+wiring_diagram.png+in+assets/)'" />
     </td>
   </tr>
 </table>
 
-> **How to add your actual photos and demonstration GIFs:**  
-> Drop your arm photos and video captures directly into the [`assets/`](assets/) folder with these file names:
-> - `assets/hardware_assembly.jpg` (Arm hardware build)
-> - `assets/demo_working.gif` (Voice control motion demo)
-> - `assets/web_dashboard.png` (Screenshot of web dashboard)
-> - `assets/wiring_diagram.png` (Wiring diagram / schematic)  
-> When pushed, they will automatically appear in the gallery above!
+> **Project Media Files in [`assets/`](assets/):**  
+> - `assets/hardware_assembly.jpg` (Physical robotic arm hardware build)
+> - `assets/demo_working.gif` (Live voice control demo: Wake, Sleep, Poses)
+> - `assets/demo_motion.gif` (Live motion demo: Pick, Place, Gripper articulation)
+> - `assets/wiring_diagram.png` (Complete circuit wiring schematic)
 
 ---
 
