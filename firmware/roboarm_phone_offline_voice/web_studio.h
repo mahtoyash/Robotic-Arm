@@ -1,0 +1,885 @@
+#pragma once
+#include <pgmspace.h>
+
+const char INDEX_HTML[] PROGMEM = R"rawliteral(
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>🦾 RoboArm Voice Controller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #07090e;
+    --panel-bg: rgba(15, 23, 42, 0.75);
+    --panel-border: rgba(56, 189, 248, 0.18);
+    --cyan: #38bdf8;
+    --emerald: #10b981;
+    --amber: #f59e0b;
+    --rose: #f43f5e;
+    --indigo: #6366f1;
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: radial-gradient(circle at 50% -10%, #172554 0%, var(--bg-dark) 70%);
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 14px 12px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .app-container {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 2px;
+  }
+  .title-group h1 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .title-group p {
+    font-size: 0.72rem;
+    color: var(--text-sub);
+    font-weight: 500;
+  }
+
+  .conn-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    padding: 5px 9px;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid var(--panel-border);
+    border-radius: 999px;
+    color: var(--cyan);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .conn-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--emerald);
+    box-shadow: 0 0 8px var(--emerald);
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.85); opacity: 0.5; }
+  }
+
+  /* ── Status Bar ── */
+  .status-row {
+    display: flex;
+    gap: 8px;
+  }
+  .badge {
+    flex: 1;
+    padding: 7px 10px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-align: center;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .badge-sleep {
+    background: rgba(30, 41, 59, 0.6);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+  }
+  .badge-awake {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.2);
+  }
+  .badge-timer {
+    background: rgba(99, 102, 241, 0.12);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.25);
+  }
+
+  /* ── Hero Voice Mic Section ── */
+  .mic-card {
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--panel-border);
+    border-radius: 22px;
+    padding: 18px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+  }
+  .mic-card::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.25), transparent 70%);
+    pointer-events: none;
+  }
+
+  .mic-btn-wrap {
+    position: relative;
+    margin: 6px 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .ripple-ring {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid var(--cyan);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .listening .ripple-ring {
+    animation: ripple-anim 2s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @keyframes ripple-anim {
+    0% { transform: scale(0.9); opacity: 0.8; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  .mic-btn {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #0284c7, #2563eb);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    box-shadow: 0 8px 25px rgba(2, 132, 199, 0.45);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    z-index: 2;
+  }
+  .mic-btn:active {
+    transform: scale(0.92);
+  }
+  .listening .mic-btn {
+    background: linear-gradient(135deg, #059669, #10b981);
+    box-shadow: 0 0 35px rgba(16, 185, 129, 0.6);
+    transform: scale(1.05);
+  }
+  .mic-btn svg {
+    width: 38px;
+    height: 38px;
+    fill: currentColor;
+  }
+  .mic-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* ── Live Speech Feedback Box ── */
+  .speech-box {
+    width: 100%;
+    background: rgba(2, 6, 23, 0.6);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    border-radius: 14px;
+    padding: 10px 12px;
+    text-align: center;
+    min-height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+  }
+  .transcript-text {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    line-height: 1.3;
+  }
+  .transcript-text .heard {
+    color: #38bdf8;
+    font-weight: 700;
+  }
+  .action-pill {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.18);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  /* ── Motion Mode Selector (Normal vs Micro) ── */
+  .mode-switch-wrap {
+    display: flex;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    padding: 4px;
+    gap: 4px;
+  }
+  .mode-switch-btn {
+    flex: 1;
+    padding: 8px 6px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-sub);
+    font-family: inherit;
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .mode-switch-btn.active {
+    background: linear-gradient(135deg, #0284c7, #2563eb);
+    color: white;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+  }
+  .mode-switch-btn.active.micro {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.35);
+  }
+
+  /* ── Command Chips Grid ── */
+  .chips-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 7px;
+  }
+  .chip-btn {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 9px 10px;
+    color: #e2e8f0;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.15s ease;
+  }
+  .chip-btn:active {
+    transform: scale(0.97);
+    background: rgba(56, 189, 248, 0.15);
+    border-color: var(--cyan);
+  }
+  .chip-btn.micro-highlight {
+    border-color: rgba(168, 85, 247, 0.4);
+    background: rgba(30, 27, 75, 0.45);
+  }
+  .chip-icon {
+    font-size: 1rem;
+  }
+  .chip-alias {
+    font-size: 0.63rem;
+    color: #64748b;
+    font-weight: 500;
+  }
+
+  /* ── Bottom Emergency Button ── */
+  .btn-cut {
+    width: 100%;
+    padding: 11px;
+    background: rgba(244, 63, 94, 0.12);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    border-radius: 14px;
+    color: #fda4af;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+  }
+  .btn-cut:active {
+    background: rgba(244, 63, 94, 0.28);
+    transform: scale(0.98);
+  }
+
+  /* ── Subtle Connectivity Help Box ── */
+  .help-box {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px dashed rgba(148, 163, 184, 0.22);
+    border-radius: 12px;
+    padding: 9px 11px;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    line-height: 1.4;
+  }
+  .help-box b {
+    color: #e2e8f0;
+  }
+  .help-box code {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--cyan);
+    background: rgba(56, 189, 248, 0.1);
+    padding: 1px 4px;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- ── 1. Top Bar ── -->
+  <header class="header">
+    <div class="title-group">
+      <h1>🦾 RoboArm Voice</h1>
+      <p>5-DOF Industrial Cobot • Mobile Mic</p>
+    </div>
+    <div class="conn-badge" onclick="changeTargetIP()">
+      <div class="conn-dot"></div>
+      <span id="ipDisplay">192.168.4.1</span>
+    </div>
+  </header>
+
+  <!-- ── 2. State & Timer Badges ── -->
+  <div class="status-row">
+    <div class="badge badge-sleep" id="robotStateBadge">💤 SLEEP (Say "Wake Up")</div>
+    <div class="badge badge-timer" id="timerBadge">⏱️ Window: 20s</div>
+  </div>
+
+  <!-- ── 3. Central Hero Mic Card ── -->
+  <div class="mic-card" id="micCard">
+    <div class="mic-btn-wrap" id="micBtnWrap">
+      <div class="ripple-ring"></div>
+      <button class="mic-btn" id="micBtn" onclick="toggleVoice()">
+        <svg viewBox="0 0 24 24" id="micSvg">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+          <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+        </svg>
+        <span class="mic-label" id="micLabel">Tap to Speak</span>
+      </button>
+    </div>
+
+    <!-- Live Spoken Feedback -->
+    <div class="speech-box">
+      <div class="transcript-text" id="transcriptText">Tap mic & speak a command</div>
+      <div class="action-pill" id="actionPill" style="display:none;">Action Executing</div>
+    </div>
+  </div>
+
+  <!-- ── 4. Mode Switcher (Normal Glide vs Micro 5°-7°) ── -->
+  <div class="mode-switch-wrap">
+    <button class="mode-switch-btn active" id="btnNormalMode" onclick="setMode('normal')">
+      🚀 Normal Glide (~15°)
+    </button>
+    <button class="mode-switch-btn" id="btnMicroMode" onclick="setMode('micro')">
+      🔬 Micro Precision (5°-7°)
+    </button>
+  </div>
+
+  <!-- ── 5. Dynamic Command Chips Grid ── -->
+  <div class="chips-grid" id="chipsContainer">
+    <!-- Populated dynamically via JS based on mode -->
+  </div>
+
+  <!-- ── 6. Emergency Power Cut ── -->
+  <button class="btn-cut" onclick="emergencyStop()">
+    ⚠️ EMERGENCY STOP (Cut PWM Power)
+  </button>
+
+  <!-- ── 7. Setup Reminder ── -->
+  <div class="help-box">
+    💡 <b>Connection:</b> Wi-Fi: <code>RoboArm-AP</code> (Pass: <code>12345678</code>) • Mobile Data <b>ON</b> • Speech: <i>"Micro Left"</i>, <i>"Thoda Aage"</i>, <i>"Grab"</i>.
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+//  Host & State Management
+// ─────────────────────────────────────────────────────────────
+let host = window.location.host;
+if (!host || host === "" || window.location.protocol === "file:") {
+  host = "192.168.4.1";
+}
+document.getElementById('ipDisplay').innerText = host;
+
+let robotState = "SLEEP";
+let currentMode = "normal"; // 'normal' or 'micro'
+let windowTimer = null;
+let secondsRemaining = 0;
+let isVoiceListening = false;
+let recognition = null;
+let restartTimer = null;
+let lastExecTime = 0;
+
+function changeTargetIP() {
+  let curr = document.getElementById('ipDisplay').innerText;
+  let newIp = prompt("ESP32 IP Address:", curr);
+  if (newIp && newIp.trim().length > 0) {
+    host = newIp.trim();
+    document.getElementById('ipDisplay').innerText = host;
+  }
+}
+
+function updateState(st) {
+  robotState = st;
+  let badge = document.getElementById('robotStateBadge');
+  if (st === "AWAKE") {
+    badge.className = "badge badge-awake";
+    badge.innerText = "🟢 AWAKE (Listening)";
+    startTimer();
+  } else {
+    badge.className = "badge badge-sleep";
+    badge.innerText = "💤 SLEEP (Say 'Wake Up')";
+    document.getElementById('timerBadge').innerText = "⏱️ Window: Inactive";
+    clearInterval(windowTimer);
+  }
+}
+
+function startTimer() {
+  clearInterval(windowTimer);
+  secondsRemaining = 60;
+  document.getElementById('timerBadge').innerText = "⏱️ Window: 60s";
+  windowTimer = setInterval(() => {
+    secondsRemaining--;
+    if (secondsRemaining > 0) {
+      document.getElementById('timerBadge').innerText = "⏱️ Window: " + secondsRemaining + "s";
+    } else {
+      clearInterval(windowTimer);
+      updateState("SLEEP");
+    }
+  }, 1000);
+}
+
+// ─────────────────────────────────────────────────────────────
+//  TTS Voice Feedback
+// ─────────────────────────────────────────────────────────────
+function speakFeedback(text) {
+  if ('speechSynthesis' in window) {
+    let u = new SpeechSynthesisUtterance(text);
+    u.rate = 1.05;
+    u.pitch = 1.0;
+    u.lang = 'en-IN';
+    window.speechSynthesis.speak(u);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+//  HTTP Dispatch to ESP32 (Instant Sub-10ms Execution)
+// ─────────────────────────────────────────────────────────────
+function executeVoiceAction(action, label) {
+  let pill = document.getElementById('actionPill');
+  pill.style.display = 'inline-block';
+  pill.innerText = "⚡ " + (label || action);
+
+  let url = (window.location.protocol === 'http:' || window.location.protocol === 'https:') 
+            ? '/cmd?action=' + action 
+            : 'http://' + host + '/cmd?action=' + action;
+
+  // Immediate State Update: ESP32 auto-wakes if asleep and executes motion right away
+  if (action === "wake") {
+    updateState("AWAKE");
+  } else if (action === "sleep") {
+    updateState("SLEEP");
+  } else {
+    updateState("AWAKE");
+  }
+
+  fetch(url)
+    .then(handleCommandResponse.bind(null, action, label))
+    .catch(handleCommandError);
+}
+
+function handleCommandResponse(action, label, res) {
+  if (!res.ok) {
+    document.getElementById('actionPill').innerText = "⚠️ Command refused";
+    return;
+  }
+  if (action === "wake") {
+    updateState("AWAKE");
+    speakFeedback("Yes Boss! I am awake");
+  } else if (action === "sleep") {
+    updateState("SLEEP");
+    speakFeedback("Going to sleep");
+  } else {
+    if (robotState === "AWAKE") startTimer();
+  }
+}
+
+function handleCommandError(err) {
+  let pill = document.getElementById('actionPill');
+  pill.style.display = 'inline-block';
+  pill.innerText = "❌ Network Error (" + host + ")";
+  pill.style.color = "#f87171";
+}
+
+function emergencyStop() {
+  let url = (window.location.protocol.startsWith('http') ? '' : 'http://' + host) + '/cut';
+  fetch(url)
+    .then(() => {
+      updateState("SLEEP");
+      speakFeedback("Emergency power cut");
+      let pill = document.getElementById('actionPill');
+      pill.style.display = 'inline-block';
+      pill.innerText = "⚠️ All Power Cut!";
+    })
+    .catch(() => {});
+}
+
+// ─────────────────────────────────────────────────────────────
+//  UI Mode Switcher & Chip Generator
+// ─────────────────────────────────────────────────────────────
+function setMode(mode) {
+  currentMode = mode;
+  let btnN = document.getElementById('btnNormalMode');
+  let btnM = document.getElementById('btnMicroMode');
+  if (mode === 'normal') {
+    btnN.className = "mode-switch-btn active";
+    btnM.className = "mode-switch-btn";
+  } else {
+    btnN.className = "mode-switch-btn";
+    btnM.className = "mode-switch-btn active micro";
+  }
+  renderChips();
+}
+
+function renderChips() {
+  const container = document.getElementById('chipsContainer');
+  const isM = (currentMode === 'micro');
+
+  const commands = [
+    // 1. Awaken & Sleep (Constant)
+    { act: "wake", label: "Wake Up", alias: '"Hey Robo", "Utho"', icon: "🟢" },
+    { act: "sleep", label: "Sleep / Rest", alias: '"Sleep", "So Jao"', icon: "🌙" },
+
+    // 2. Gripper (Constant, per user request)
+    { act: "grab", label: "✊ Grab Claw", alias: '"Grab", "Pakdo"', icon: "🤏" },
+    { act: "open", label: "✋ Open Claw", alias: '"Open", "Kholo"', icon: "👐" },
+
+    // 3. Base Rotation (Clockwise & Anticlockwise)
+    {
+      act: isM ? "micro_base_right" : "base_right",
+      label: isM ? "🔬 Micro Clockwise (5°)" : "↻ Clockwise (~15°)",
+      alias: isM ? '"Micro clockwise", "Thoda clockwise"' : '"Clockwise", "CW"',
+      icon: "↻"
+    },
+    {
+      act: isM ? "micro_base_left" : "base_left",
+      label: isM ? "🔬 Micro Anticlockwise (5°)" : "↺ Anticlockwise (~15°)",
+      alias: isM ? '"Micro anticlockwise", "Thoda anticlockwise"' : '"Anticlockwise", "CCW"',
+      icon: "↺"
+    },
+
+    // 4. Elbow Height (Elbow Raise / Elbow Lower)
+    {
+      act: isM ? "micro_elbow_up" : "elbow_up",
+      label: isM ? "🔬 Micro Elbow Raise (5°)" : "🦾 Elbow Raise",
+      alias: isM ? '"Micro elbow raise", "Thoda upar"' : '"Elbow raise", "Elbow upar", "Elbow lift"',
+      icon: "🦾"
+    },
+    {
+      act: isM ? "micro_elbow_down" : "elbow_down",
+      label: isM ? "🔬 Micro Elbow Lower (5°)" : "🦾 Elbow Lower",
+      alias: isM ? '"Micro elbow lower", "Thoda niche"' : '"Elbow lower", "Elbow niche"',
+      icon: "🦾"
+    },
+
+    // 5. Shoulder Reach (Normal or Micro 5°)
+    {
+      act: isM ? "micro_shoulder_front" : "shoulder_front",
+      label: isM ? "🔬 Micro Front (5°)" : "⤹ Reach Front",
+      alias: isM ? '"Micro front", "Thoda aage"' : '"Front", "Aage", "Push"',
+      icon: "🚀"
+    },
+    {
+      act: isM ? "micro_shoulder_back" : "shoulder_back",
+      label: isM ? "🔬 Micro Back (5°)" : "⤸ Pull Back",
+      alias: isM ? '"Micro back", "Thoda peeche"' : '"Back", "Pull", "Peeche"',
+      icon: "🛡️"
+    },
+
+    // 6. Vertical Tilt (Raise / Upar & Lower / Niche)
+    {
+      act: isM ? "micro_wrist_up" : "wrist_up",
+      label: isM ? "🔬 Micro Raise (5°)" : "⬆️ Raise / Upar",
+      alias: isM ? '"Micro raise", "Thoda upar"' : '"Raise", "Upar", "Lift"',
+      icon: "⬆️"
+    },
+    {
+      act: isM ? "micro_wrist_down" : "wrist_down",
+      label: isM ? "🔬 Micro Lower (5°)" : "⬇️ Lower / Niche",
+      alias: isM ? '"Micro lower", "Thoda niche"' : '"Lower", "Niche", "Down"',
+      icon: "⬇️"
+    },
+
+    // 7. Wrist Roll (Normal or Micro 5°)
+    {
+      act: isM ? "micro_roll_left" : "roll_left",
+      label: isM ? "🔬 Micro Roll L (5°)" : "↻ Hand Roll Left",
+      alias: isM ? '"Micro roll left"' : '"Roll left"',
+      icon: "💫"
+    },
+    {
+      act: isM ? "micro_roll_right" : "roll_right",
+      label: isM ? "🔬 Micro Roll R (5°)" : "↺ Hand Roll Right",
+      alias: isM ? '"Micro roll right"' : '"Roll right"',
+      icon: "💫"
+    }
+  ];
+
+  let html = "";
+  commands.forEach(c => {
+    let cls = isM && c.act.startsWith('micro_') ? 'chip-btn micro-highlight' : 'chip-btn';
+    html += `
+      <button class="${cls}" onclick="executeVoiceAction('${c.act}', '${c.label}')">
+        <div>
+          <div>${c.label}</div>
+          <div class="chip-alias">${c.alias}</div>
+        </div>
+        <span class="chip-icon">${c.icon}</span>
+      </button>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+// Initial chip render
+renderChips();
+
+// ─────────────────────────────────────────────────────────────
+//  Continuous Web Speech API Engine
+// ─────────────────────────────────────────────────────────────
+function initSpeechEngine() {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) {
+    alert("Speech API unavailable. Please use Google Chrome.");
+    return false;
+  }
+
+  if (recognition) return true;
+
+  try {
+    recognition = new SpeechRec();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-IN';
+
+    recognition.onstart = () => {
+      isVoiceListening = true;
+      document.getElementById('micBtnWrap').classList.add('listening');
+      document.getElementById('micLabel').innerText = "Listening...";
+      document.getElementById('transcriptText').innerHTML = "🎙️ <i>Listening... speak now!</i>";
+    };
+
+    recognition.onerror = (e) => {
+      console.warn("Speech error:", e.error);
+      if (e.error === 'no-speech') return;
+      if (e.error === 'not-allowed') {
+        isVoiceListening = false;
+        document.getElementById('micBtnWrap').classList.remove('listening');
+        document.getElementById('micLabel').innerText = "Mic Blocked";
+        document.getElementById('transcriptText').innerHTML = "<span style='color:#f87171'>⚠️ Mic permission blocked in Chrome settings!</span>";
+      } else if (e.error === 'network') {
+        isVoiceListening = false;
+        clearTimeout(restartTimer);
+        document.getElementById('micBtnWrap').classList.remove('listening');
+        document.getElementById('micLabel').innerText = "Offline";
+        document.getElementById('transcriptText').innerHTML = "<span style='color:#f87171'>⚠️ Turn ON Mobile Data (4G/5G) so Chrome can process speech!</span>";
+      }
+    };
+
+    recognition.onend = () => {
+      if (isVoiceListening) {
+        restartTimer = setTimeout(() => {
+          if (isVoiceListening) {
+            try { recognition.start(); } catch(err) {}
+          }
+        }, 200);
+      } else {
+        document.getElementById('micBtnWrap').classList.remove('listening');
+        document.getElementById('micLabel').innerText = "Tap to Speak";
+      }
+    };
+
+    recognition.onresult = (e) => {
+      let interim = "";
+      let final = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        let text = e.results[i][0].transcript;
+        if (e.results[i].isFinal) final += text;
+        else interim += text;
+      }
+
+      let spoken = (final.length > 0 ? final : interim).trim();
+      if (spoken.length > 0) {
+        document.getElementById('transcriptText').innerHTML = `Heard: <span class="heard">"${spoken}"</span>`;
+        parseAndExecute(spoken.toLowerCase());
+      }
+    };
+
+    return true;
+  } catch(err) {
+    console.error("Speech Init Error:", err);
+    return false;
+  }
+}
+
+function toggleVoice() {
+  if (!initSpeechEngine()) return;
+
+  if (isVoiceListening) {
+    isVoiceListening = false;
+    clearTimeout(restartTimer);
+    try { recognition.stop(); } catch(e) {}
+    document.getElementById('micBtnWrap').classList.remove('listening');
+    document.getElementById('micLabel').innerText = "Tap to Speak";
+    document.getElementById('transcriptText').innerText = "Mic paused. Tap to speak again.";
+  } else {
+    isVoiceListening = true;
+    try { recognition.start(); } catch(e) {}
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+//  Bilingual Parser with Direct Micro Recognition (5°-7°)
+// ─────────────────────────────────────────────────────────────
+let lastExecText = "";
+
+function parseAndExecute(raw) {
+  let now = Date.now();
+  if (raw === lastExecText && now - lastExecTime < 800) return;
+  if (now - lastExecTime < 550) return; // Snappy 550ms debounce for rapid successive commands
+
+  let isMicro = raw.includes("micro") || raw.includes("thoda") || raw.includes("nudge") || raw.includes("little") || raw.includes("bit") || raw.includes("chota") || (currentMode === 'micro');
+  let action = null;
+  let label = "";
+
+  // 1. Wake
+  if (raw.includes("wake") || raw.includes("robo") || raw.includes("utho") || raw.includes("jag") || raw.includes("hello")) {
+    action = "wake"; label = "Waking Up";
+  }
+  // 2. Sleep
+  else if (raw.includes("sleep") || raw.includes("so jao") || raw.includes("rest") || raw.includes("relax") || raw.includes("park")) {
+    action = "sleep"; label = "Going to Sleep";
+  }
+  // 3. Gripper Grab (Smart Clamp & Silence)
+  else if (raw.includes("grab") || raw.includes("pakad") || raw.includes("pakdo") || raw.includes("close") || raw.includes("band") || raw.includes("hold") || raw.includes("clamp")) {
+    action = "grab"; label = "Grab (Firm & Silent)";
+  }
+  // 4. Gripper Open (Instant Claw Open)
+  else if (raw.includes("open") || raw.includes("khol") || raw.includes("kholo") || raw.includes("chhod") || raw.includes("release")) {
+    action = "open"; label = "Open (Release)";
+  }
+  // 5. Wrist Roll
+  else if (raw.includes("roll left") || raw.includes("twist left")) {
+    action = isMicro ? "micro_roll_left" : "roll_left";
+    label = isMicro ? "Micro Roll Left (5°)" : "Roll Left";
+  }
+  else if (raw.includes("roll right") || raw.includes("twist right")) {
+    action = isMicro ? "micro_roll_right" : "roll_right";
+    label = isMicro ? "Micro Roll Right (5°)" : "Roll Right";
+  }
+  // 6. Elbow (MUST explicitly mention 'elbow' - supports raise, upar, lift, lower, niche)
+  else if (raw.includes("elbow") && (raw.includes("raise") || raw.includes("upar") || raw.includes("lift") || raw.includes("high") || raw.includes("up") || raw.includes("app") || raw.includes("uth"))) {
+    action = isMicro ? "micro_elbow_up" : "elbow_up";
+    label = isMicro ? "Micro Elbow Raise (5°)" : "Elbow Raise";
+  }
+  else if (raw.includes("elbow") && (raw.includes("lower") || raw.includes("niche") || raw.includes("neeche") || raw.includes("down") || raw.includes("drop") || raw.includes("bithao"))) {
+    action = isMicro ? "micro_elbow_down" : "elbow_down";
+    label = isMicro ? "Micro Elbow Lower (5°)" : "Elbow Lower";
+  }
+  // 7. Base Clockwise & Anticlockwise (also supports left / right)
+  else if (raw.includes("anti") || raw.includes("counter") || raw.includes("ccw") || raw.includes("left") || raw.includes("baaye")) {
+    action = isMicro ? "micro_base_left" : "base_left";
+    label = isMicro ? "Micro Anticlockwise (5°)" : "Anticlockwise";
+  }
+  else if (raw.includes("clock") || raw.includes("cw") || raw.includes("right") || raw.includes("daaye")) {
+    action = isMicro ? "micro_base_right" : "base_right";
+    label = isMicro ? "Micro Clockwise (5°)" : "Clockwise";
+  }
+  // 8. Vertical Tilt (Claw Raise / Upar & Lower / Niche)
+  else if (raw.includes("raise") || raw.includes("upar") || raw.includes("lift") || raw.includes("high") || raw.includes("tilt up") || raw.includes("up") || raw.includes("app") || raw.includes("uthao")) {
+    action = isMicro ? "micro_wrist_up" : "wrist_up";
+    label = isMicro ? "Micro Raise (5°)" : "Raise / Upar";
+  }
+  else if (raw.includes("lower") || raw.includes("niche") || raw.includes("neeche") || raw.includes("tilt down") || raw.includes("down") || raw.includes("drop") || raw.includes("jhukao")) {
+    action = isMicro ? "micro_wrist_down" : "wrist_down";
+    label = isMicro ? "Micro Lower (5°)" : "Lower / Niche";
+  }
+  // 9. Shoulder (Front / Reach vs Back / Pull / Rivers / Reverse / Peeche)
+  else if (raw.includes("front") || raw.includes("aage") || raw.includes("forward") || raw.includes("reach") || raw.includes("push")) {
+    action = isMicro ? "micro_shoulder_front" : "shoulder_front";
+    label = isMicro ? "Micro Front (5°)" : "Reach Front";
+  }
+  else if (raw.includes("back") || raw.includes("peeche") || raw.includes("piche") || raw.includes("pull") || raw.includes("rivers") || raw.includes("river") || raw.includes("reverse") || raw.includes("shoulder rivers") || raw.includes("shoulder back")) {
+    action = isMicro ? "micro_shoulder_back" : "shoulder_back";
+    label = isMicro ? "Micro Back (5°)" : "Pull Back";
+  }
+  // 10. Stop
+  else if (raw.includes("stop") || raw.includes("ruko")) {
+    action = "stop"; label = "Stop";
+  }
+
+  if (action) {
+    lastExecTime = now;
+    lastExecText = raw;
+    executeVoiceAction(action, label);
+  }
+}
+</script>
+</body>
+</html>
+
+)rawliteral";
