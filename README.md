@@ -292,7 +292,7 @@ Distributed under the **MIT License**. See [LICENSE](LICENSE) for full legal tex
         <img src="https://github.com/mahtoyash.png" width="90" style="border-radius: 50%;" alt="Yash Mahto"/><br/><br/>
         <b>Yash Mahto</b>
       </a>
-      <br/><sub>Lead Developer</sub>
+      <br/><sub>Developer</sub>
     </td>
     <td align="center" width="200">
       <a href="https://github.com/GodaseAnurag2601">
