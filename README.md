@@ -283,6 +283,27 @@ Distributed under the **MIT License**. See [LICENSE](LICENSE) for full legal tex
 
 ---
 
+## Authors and Maintainers
+
+<table align="center">
+  <tr>
+    <td align="center" width="200">
+      <a href="https://github.com/mahtoyash">
+        <img src="https://github.com/mahtoyash.png" width="90" style="border-radius: 50%;" alt="Yash Mahto"/><br/><br/>
+        <b>Yash Mahto</b>
+      </a>
+      <br/><sub>Lead Developer</sub>
+    </td>
+    <td align="center" width="200">
+      <a href="https://github.com/GodaseAnurag2601">
+        <img src="https://github.com/GodaseAnurag2601.png" width="90" style="border-radius: 50%;" alt="Anurag Godase"/><br/><br/>
+        <b>Anurag Godase</b>
+      </a>
+      <br/><sub>Developer</sub>
+    </td>
+  </tr>
+</table>
+
 <div align="center">
-  <b>Developed by <a href="https://github.com/mahtoyash">Yash Mahto</a></b>
+  <b>Developed by <a href="https://github.com/mahtoyash">Yash Mahto</a> and <a href="https://github.com/GodaseAnurag2601">Anurag Godase</a></b>
 </div>
