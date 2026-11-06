@@ -17,12 +17,12 @@
 
 <p align="center">
   <a href="#project-overview">Overview</a> •
+  <a href="#glimpses-of-work">Glimpses of Work</a> •
   <a href="#system-architecture">Architecture</a> •
   <a href="#bill-of-materials-bom">Bill of Materials</a> •
   <a href="#wiring-and-connections">Wiring</a> •
   <a href="#getting-started">Getting Started</a> •
   <a href="#voice-command-reference">Voice Commands</a> •
-  <a href="#glimpse-of-works">Glimpse of Works</a> •
   <a href="#contributing">Contributing</a> •
   <a href="#license">License</a>
 </p>
@@ -35,6 +35,32 @@
 
 This repository contains the complete firmware, host servers, and documentation for a 5 Degrees of Freedom (5-DOF) robotic arm featuring a 2-link articulated kinematic structure. The platform utilizes high-torque MG996R metal-gear servos for heavy primary joints (base, shoulder, elbow) and MG90S micro servos for end-effector manipulation (wrist roll, wrist pitch, gripper).
 
+### Glimpses of Work
+
+<table align="center" width="100%">
+  <tr>
+    <td align="center" width="50%" valign="top">
+      <b>Physical Hardware Assembly</b><br/><br/>
+      <img src="assets/hardware_assembly.jpg" alt="Hardware Assembly" height="280" style="max-height: 280px; object-fit: contain; border-radius: 8px;" />
+    </td>
+    <td align="center" width="50%" valign="top">
+      <b>Voice Command Execution (Live Demo)</b><br/><br/>
+      <img src="assets/demo_working.gif" alt="Voice Control Demo" height="280" style="max-height: 280px; object-fit: contain; border-radius: 8px;" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%" valign="top">
+      <b>Wiring and Circuit Schematic</b><br/><br/>
+      <img src="assets/wiring_diagram.png" alt="Circuit Schematic" height="280" style="max-height: 280px; object-fit: contain; border-radius: 8px;" />
+    </td>
+    <td align="center" width="50%" valign="top">
+      <b>Arm Articulation &amp; Motion Routine (Demo)</b><br/><br/>
+      <img src="assets/demo_motion.gif" alt="Arm Motion Demo" height="280" style="max-height: 280px; object-fit: contain; border-radius: 8px;" />
+    </td>
+  </tr>
+</table>
+
+### Operational Control Modes
 The arm supports three distinct operational interfaces:
 1. **Local Offline Voice Control (Android Termux / PC)**: High-speed, zero-cloud dependency speech recognition capable of interpreting English and Hindi commands with sub-second execution latency over local Wi-Fi.
 2. **Cloud AI Speech Transcription (Groq Whisper API)**: Direct on-chip acoustic capture via an INMP441 I2S MEMS microphone, streaming WAV payloads from the ESP32 directly to the Groq Cloud API for speech-to-text processing.
@@ -236,39 +262,6 @@ The voice processing system includes natural multilingual mappings for English a
 | **Arm Down** | `"down"`, `"lower"` | `"neeche"`, `"jhuko"` |
 | **Wrist Roll** | `"roll left"`, `"roll right"` | `"kalai ghumao"` |
 | **Reset / Home** | `"reset"`, `"home"` | `"seedhe ho jao"`, `"home"` |
-
----
-
-## Glimpse of Works
-
-<table align="center" width="100%">
-  <tr>
-    <td align="center" width="50%" valign="top">
-      <b>Physical Hardware Assembly</b><br/><br/>
-      <img src="assets/hardware_assembly.jpg" alt="Hardware Assembly" height="280" style="max-height: 280px; object-fit: contain; border-radius: 8px;" />
-    </td>
-    <td align="center" width="50%" valign="top">
-      <b>Voice Command Execution (Live Demo)</b><br/><br/>
-      <img src="assets/demo_working.gif" alt="Voice Control Demo" height="280" style="max-height: 280px; object-fit: contain; border-radius: 8px;" />
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="50%" valign="top">
-      <b>Wiring and Circuit Schematic</b><br/><br/>
-      <img src="assets/wiring_diagram.png" alt="Circuit Schematic" height="280" style="max-height: 280px; object-fit: contain; border-radius: 8px;" />
-    </td>
-    <td align="center" width="50%" valign="top">
-      <b>Arm Articulation &amp; Motion Routine (Demo)</b><br/><br/>
-      <img src="assets/demo_motion.gif" alt="Arm Motion Demo" height="280" style="max-height: 280px; object-fit: contain; border-radius: 8px;" />
-    </td>
-  </tr>
-</table>
-
-> **Project Media Files in [`assets/`](assets/):**  
-> - `assets/hardware_assembly.jpg` (Physical robotic arm hardware build)
-> - `assets/demo_working.gif` (Live voice control demo: Wake, Sleep, Poses)
-> - `assets/wiring_diagram.png` (Complete circuit wiring schematic)
-> - `assets/demo_motion.gif` (Arm articulation and motion routine demo)
 
 ---
 
