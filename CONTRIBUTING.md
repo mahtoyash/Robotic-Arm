@@ -1,30 +1,30 @@
-# Contributing to Voice-Controlled Robotic Arm 🦾
+# Contributing to Voice-Controlled Robotic Arm
 
-Thank you for your interest in contributing to the **Voice-Controlled Robotic Arm** project! Whether you are fixing a bug, adding new features, improving kinematics/calibration algorithms, or enhancing documentation, your help is warmly welcomed.
+Thank you for your interest in contributing to the **Voice-Controlled Robotic Arm** project. Whether you are fixing a bug, adding new features, improving kinematics/calibration algorithms, or enhancing documentation, your help is appreciated.
 
-Please take a moment to review these guidelines before submitting a contribution.
+Please review these guidelines before submitting a contribution.
 
 ---
 
-## 📜 Code of Conduct
+## Code of Conduct
 
 This project and everyone participating in it is governed by our [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior at our [GitHub Issues](https://github.com/mahtoyash/Robotic-Arm/issues).
 
 ---
 
-## 🛠️ Development Setup
+## Development Setup
 
 ### 1. Embedded / Firmware Setup (ESP32)
 1. Install the [Arduino IDE](https://www.arduino.cc/en/software) (2.0+ recommended) or [PlatformIO](https://platformio.org/).
 2. Add the ESP32 Board URL to your Arduino IDE Preferences:
-   ```
+   ```text
    https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
    ```
 3. Install the **esp32** board package via the Boards Manager.
 4. Install the required libraries via Arduino Library Manager:
    - `Adafruit PWM Servo Driver Library` (by Adafruit)
-   - `WiFi` & `WebServer` (included in ESP32 core)
-   - `HTTPClient` & `WiFiClientSecure` (included in ESP32 core)
+   - `WiFi` and `WebServer` (included in ESP32 core)
+   - `HTTPClient` and `WiFiClientSecure` (included in ESP32 core)
 
 ### 2. Python Voice Server Setup (PC / Android Termux)
 1. Ensure Python 3.8+ is installed:
@@ -39,7 +39,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 
 ---
 
-## 🚀 How to Contribute
+## How to Contribute
 
 ### 1. Reporting Bugs
 - Check the [Issues Tab](https://github.com/mahtoyash/Robotic-Arm/issues) first to ensure the bug hasn't already been reported.
@@ -60,8 +60,6 @@ This project and everyone participating in it is governed by our [Code of Conduc
 3. **Create a descriptive feature branch**:
    ```bash
    git checkout -b feature/your-feature-name
-   # or
-   git checkout -b fix/issue-description
    ```
 4. **Make your changes**:
    - Keep code clean and well-commented.
@@ -83,7 +81,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 
 ---
 
-## 🎨 Coding Guidelines
+## Coding Guidelines
 
 ### C++ / Arduino Firmware
 - Group pin definitions and hardware parameters at the top of the file.
@@ -96,7 +94,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 
 ---
 
-## 💬 Community & Questions
+## Community and Questions
 
 Have questions or need help troubleshooting hardware/firmware?
 - Open a discussion or question issue in the [GitHub Issues](https://github.com/mahtoyash/Robotic-Arm/issues).

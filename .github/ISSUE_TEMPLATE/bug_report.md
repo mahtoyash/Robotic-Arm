@@ -32,3 +32,4 @@ Paste your Serial Monitor or Python console logs here
 
 **Additional Context**
 Add any other context about the problem here (e.g., servo buzzing, gear binding, network disconnects).
+
