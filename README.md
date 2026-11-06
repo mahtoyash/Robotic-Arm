@@ -45,25 +45,34 @@ The arm supports three distinct operational interfaces:
 
 ```mermaid
 flowchart TD
+    classDef inputNode fill:#0284c7,stroke:#38bdf8,stroke-width:2px,color:#ffffff;
+    classDef serverNode fill:#4f46e5,stroke:#818cf8,stroke-width:2px,color:#ffffff;
+    classDef cloudNode fill:#7c3aed,stroke:#c084fc,stroke-width:2px,color:#ffffff;
+    classDef mcuNode fill:#059669,stroke:#34d399,stroke-width:3px,color:#ffffff;
+    classDef driverNode fill:#ea580c,stroke:#fb923c,stroke-width:2px,color:#ffffff;
+    classDef powerNode fill:#d97706,stroke:#fcd34d,stroke-width:2px,color:#ffffff;
+    classDef heavyNode fill:#db2777,stroke:#f472b6,stroke-width:2px,color:#ffffff;
+    classDef microNode fill:#e11d48,stroke:#fb7185,stroke-width:2px,color:#ffffff;
+
     subgraph Input_Channels["Input and Control Channels"]
-        A1["Smartphone Mic / Termux"] -->|HTTP REST| B1["Python Local Server<br/>arm_server.py"]
-        A2["INMP441 MEMS Mic"] -->|I2S Bus| B2["ESP32 Audio Streamer<br/>WAV Buffer"]
-        A3["Web Browser Studio"] -->|HTTP / WebSockets| C["ESP32 Core Brain<br/>Dual Mode AP / STA"]
+        A1["Smartphone Mic / Termux"]:::inputNode -->|HTTP REST| B1["Python Local Server<br/>arm_server.py"]:::serverNode
+        A2["INMP441 MEMS Mic"]:::inputNode -->|I2S Bus| B2["ESP32 Audio Streamer<br/>WAV Buffer"]:::serverNode
+        A3["Web Browser Studio"]:::inputNode -->|HTTP / WebSockets| C["ESP32 Core Brain<br/>Dual Mode AP / STA"]:::mcuNode
     end
 
     B1 -->|REST API JSON| C
-    B2 -->|HTTPS Post| D["Groq Cloud API<br/>Whisper STT"]
+    B2 -->|HTTPS Post| D["Groq Cloud API<br/>Whisper STT"]:::cloudNode
     D -->|Transcribed Text| C
 
     subgraph Hardware_Layer["Hardware Execution"]
-        C -->|I2C Interface| E["PCA9685 16-Channel<br/>PWM Servo Driver"]
-        F["SMPS Power Supply<br/>5V / 10A"] -->|Servo Power Rail| E
-        E -->|CH 0| M1["Base Rotation<br/>MG996R 360 deg"]
-        E -->|CH 2| M2["Shoulder Joint<br/>MG996R 180 deg"]
-        E -->|CH 4| M3["Elbow Joint<br/>MG996R 180 deg"]
-        E -->|CH 6| M4["Wrist Roll<br/>MG90S 180 deg"]
-        E -->|CH 8| M5["Wrist Pitch<br/>MG90S 180 deg"]
-        E -->|CH 10| M6["Gripper Claw<br/>MG90S 180 deg"]
+        C -->|I2C Interface| E["PCA9685 16-Channel<br/>PWM Servo Driver"]:::driverNode
+        F["SMPS Power Supply<br/>5V / 10A"]:::powerNode -->|Servo Power Rail| E
+        E -->|CH 0| M1["Base Rotation<br/>MG996R 360 deg"]:::heavyNode
+        E -->|CH 2| M2["Shoulder Joint<br/>MG996R 180 deg"]:::heavyNode
+        E -->|CH 4| M3["Elbow Joint<br/>MG996R 180 deg"]:::heavyNode
+        E -->|CH 6| M4["Wrist Roll<br/>MG90S 180 deg"]:::microNode
+        E -->|CH 8| M5["Wrist Pitch<br/>MG90S 180 deg"]:::microNode
+        E -->|CH 10| M6["Gripper Claw<br/>MG90S 180 deg"]:::microNode
     end
 ```
 
@@ -229,13 +238,38 @@ The voice processing system includes natural multilingual mappings for English a
 
 ---
 
-## Media and Demonstrations
+## Media and Implementations
 
-*Photographs, demonstration videos, and interface captures can be linked here.*
+<table align="center" width="100%">
+  <tr>
+    <td align="center" width="50%">
+      <b>Physical Hardware Assembly</b><br/><br/>
+      <img src="assets/hardware_assembly.jpg" alt="Hardware Assembly" width="95%" onerror="this.src='https://dummyimage.com/600x400/0f172a/38bdf8.png&text=Hardware+Assembly+Photo+(Drop+in+assets/)'" />
+    </td>
+    <td align="center" width="50%">
+      <b>Voice Control in Action (Live Demo)</b><br/><br/>
+      <img src="assets/demo_working.gif" alt="Voice Control Demo" width="95%" onerror="this.src='https://dummyimage.com/600x400/0f172a/34d399.png&text=Voice+Command+Demo+GIF+(Drop+in+assets/)'" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <b>Interactive Web Control Dashboard</b><br/><br/>
+      <img src="assets/web_dashboard.png" alt="Web Dashboard" width="95%" onerror="this.src='https://dummyimage.com/600x400/0f172a/818cf8.png&text=Web+Dashboard+UI+(Drop+in+assets/)'" />
+    </td>
+    <td align="center" width="50%">
+      <b>Wiring and Circuit Schematic</b><br/><br/>
+      <img src="assets/wiring_diagram.png" alt="Circuit Schematic" width="95%" onerror="this.src='https://dummyimage.com/600x400/0f172a/fb923c.png&text=Wiring+Schematic+(Drop+in+assets/)'" />
+    </td>
+  </tr>
+</table>
 
-```text
-[ Hardware Setup Photo ]       [ Web Studio Interface ]       [ Voice Control Demonstration ]
-```
+> **How to add your actual photos and demonstration GIFs:**  
+> Drop your arm photos and video captures directly into the [`assets/`](assets/) folder with these file names:
+> - `assets/hardware_assembly.jpg` (Arm hardware build)
+> - `assets/demo_working.gif` (Voice control motion demo)
+> - `assets/web_dashboard.png` (Screenshot of web dashboard)
+> - `assets/wiring_diagram.png` (Wiring diagram / schematic)  
+> When pushed, they will automatically appear in the gallery above!
 
 ---
 
